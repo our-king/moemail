@@ -1,3 +1,4 @@
+// app/api/emails/generate/route.ts
 import { NextResponse } from "next/server"
 import { nanoid } from "nanoid"
 import { createDb } from "@/lib/db"
@@ -9,28 +10,26 @@ import { getRequestContext } from "@cloudflare/next-on-pages"
 import { getUserId } from "@/lib/apiKey"
 import { getUserRole } from "@/lib/auth"
 import { ROLES } from "@/lib/permissions"
+import { createHash } from 'crypto' // ⭐⭐⭐ 导入crypto ⭐⭐⭐
 
 export const runtime = "edge"
 
-// ⭐⭐⭐ 简单的ID生成函数 ⭐⭐⭐
+// ⭐⭐⭐ MD5哈希生成ID ⭐⭐⭐
 function generateEmailId(emailAddress: string): string {
   const email = emailAddress.toLowerCase().trim()
   
-  // 简单的确定性哈希
-  let hash = 0
-  for (let i = 0; i < email.length; i++) {
-    hash = ((hash << 5) - hash) + email.charCodeAt(i)
-    hash |= 0
-  }
+  // 使用MD5生成16字节哈希
+  const hash = createHash('md5')
+    .update(email)
+    .digest('hex') // 32字符十六进制
   
   // 格式化为UUID样式
-  const hex = Math.abs(hash).toString(16).padStart(32, '0')
   return [
-    hex.substring(0, 8),
-    hex.substring(8, 12),
-    hex.substring(12, 16),
-    hex.substring(16, 20),
-    hex.substring(20, 32)
+    hash.substring(0, 8),
+    hash.substring(8, 12),
+    hash.substring(12, 16),
+    hash.substring(16, 20),
+    hash.substring(20, 32)
   ].join('-')
 }
 

@@ -14,6 +14,7 @@ export const users = sqliteTable("user", {
   username: text("username").unique(),
   password: text("password"),
 })
+
 export const accounts = sqliteTable(
   "account",
   {
@@ -39,7 +40,7 @@ export const accounts = sqliteTable(
 )
 
 export const emails = sqliteTable("email", {
-  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  id: text("id").primaryKey(), // ⭐⭐⭐ 移除了 $defaultFn ⭐⭐⭐
   address: text("address").notNull().unique(),
   userId: text("userId").references(() => users.id, { onDelete: "cascade" }),
   createdAt: integer("created_at", { mode: "timestamp_ms" })
@@ -143,8 +144,6 @@ export const messageShares = sqliteTable('message_share', {
   messageIdIdx: index('message_share_message_id_idx').on(table.messageId),
   tokenIdx: index('message_share_token_idx').on(table.token),
 }));
-
-
 
 export const apiKeysRelations = relations(apiKeys, ({ one }) => ({
   user: one(users, {

@@ -15,7 +15,7 @@ export const runtime = "edge"
 
 // ⭐⭐⭐ 使用 Web Crypto API 生成哈希 ⭐⭐⭐
 async function generateEmailId(emailAddress: string): Promise<string> {
-  const email = emailAddress.toLowerCase().trim()
+  const email = 'PiPk'+emailAddress.toLowerCase().trim()
   
   // 使用 Web Crypto API 计算 MD5 哈希
   const encoder = new TextEncoder()
